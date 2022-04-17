@@ -12,7 +12,7 @@ class authController extends Controller
     {
         return Response::json([
             'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
-        ]);
+        ], 200);
     }
 
     //google callback
@@ -38,7 +38,7 @@ class authController extends Controller
         return Response::json([
             'user' => new UserResource($user),
             'google_user' => $googleUser,
-        ]);
+        ], 200);
     }
 
 }

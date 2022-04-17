@@ -17,16 +17,3 @@ use App\Middleware\logincheck;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-});
-
-Route::get('/logout', function () {
-    auth()->logout();
-    return redirect('google_login');
-})->name('logout');
-
-Route::get('google_login',[authController::class,'login']);
-Route::get('/google/redirect',[authController::class,'google_redirect'])->name('google_redirect');
-Route::get('/google/callback',[authController::class,'google_callback'])->name('google_callback');

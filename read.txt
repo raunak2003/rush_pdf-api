@@ -1,0 +1,21 @@
+    //Storing of data in database
+    // private function createorupdateuser($data, $provider)
+    // {
+    //     $user = User::where('email', $data->email)->first();
+    //     if ($user) {
+    //         $user->update([
+    //             'provider' => $provider,
+    //             'avatar' => $data->avatar,
+    //             'remember_token' => $data->token
+    //         ]);
+    //     } else {
+    //         $user = User::create([
+    //             'name' => $data->name,
+    //             'email' => $data->email,
+    //             'provider' => $provider,
+    //             'avatar' => $data->avatar,
+    //             'remember_token' => $data->token
+    //         ]);
+    //     }
+    //     Auth::login($user);
+    // }

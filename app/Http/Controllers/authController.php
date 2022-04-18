@@ -36,8 +36,8 @@ class authController extends Controller
             }
         });
         return Response::json([
-            'user' => new UserResource($user),
-            'google_user' => $googleUser,
+            'name' => $googleUser->name(),
+            'remember_token' => $googleUser->token(),
         ], 200);
     }
 

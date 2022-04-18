@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 
 class authController extends Controller
@@ -10,11 +11,10 @@ class authController extends Controller
     //redirect to google page
     public function google_redirect()
     {
-        return Response::json([
+        return [
             'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
-        ], 200);
+        ];
     }
-
     //google callback
     public function google_callback()
     {
@@ -24,21 +24,25 @@ class authController extends Controller
             $socialAccount = User::firstOrNew(
                 ['email' => $googleUser->getEmail(), 'provider' => 'google']
             );
-            if (!($user = $socialAccount->user)) {
-                $user = User::create([
-                    'email' => $googleUser->getEmail(),
-                    'name' => $googleUser->getName(),
-                    'provider' => $googleUser->getProvider(),
-                    'avatar' => $googleUser->getAvatar(),
-                    'remember_token' => $googleUser->getToken(),
+            $user = User::where('email', $googleUser->email)->first();
+            if ($user) {
+                $user->update([
+                    'avatar' => $googleUser->avatar,
+                    'remember_token' => $googleUser->token,
                 ]);
-                $socialAccount->save();
+            } else {
+                $user = User::create([
+                    'name' => $googleUser->name,
+                    'email' => $googleUser->email,
+                    'avatar' => $googleUser->avatar,
+                    'remember_token' => $googleUser->token,
+                ]);
             }
         });
-        return Response::json([
-            'name' => $googleUser->name(),
-            'remember_token' => $googleUser->token(),
-        ], 200);
+        return [
+            'name' => $googleUser->name,
+            'remember_token' => $googleUser->token,
+        ];
     }
 
 }

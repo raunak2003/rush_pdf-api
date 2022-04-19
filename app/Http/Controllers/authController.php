@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
+// use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class authController extends Controller
 {
@@ -15,9 +16,16 @@ class authController extends Controller
             'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
         ];
     }
+
+    // public function getJWTIdentifier()
+    // {
+    //     return $this->getKey();
+    // }
+
     //google callback
     public function google_callback()
     {
+        
         $googleUser = Socialite::driver('google')->stateless()->user();
         $user = null;
         DB::transaction(function () use ($googleUser, &$user) {
@@ -41,7 +49,7 @@ class authController extends Controller
         });
         return [
             'name' => $googleUser->name,
-            'remember_token' => $googleUser->token,
+            'remember_token' =>$googleUser->token,
         ];
     }
 

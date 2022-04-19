@@ -1,3 +1,4 @@
 ### Raunaq Project work list
 
-* [x] Create Google Login API
+* [ ] Generate JWT Token
+* [ ] Auth Middleware implementation

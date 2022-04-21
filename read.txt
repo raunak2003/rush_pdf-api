@@ -19,3 +19,8 @@
     //     }
     //     Auth::login($user);
     // }
+
+$admin->createToken('admin-token', ['admin', 'admin-email'])
+$admin = Admin::where('email', $email)->first();
+$request->user();
+Auth:user();

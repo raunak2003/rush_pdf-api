@@ -13,8 +13,8 @@ class fileController extends Controller
 
         $validator = Validator::make($request->all(),
             [
-                'user_id' => 'required',
-                'file' => 'required|mimes:doc,docx,pdf,txt|max:2048',
+                // 'user_id' => 'required',
+                'file' => 'required|mimes:pdf|max:2048',
             ]);
 
         if ($validator->fails()) {
@@ -22,12 +22,12 @@ class fileController extends Controller
         }
 
         if ($file = $request->file('file')) {
-            $path = $file->store('public/documents/');
+            $path = $file->store('./userDocuments/');
 
             //store your file into directory and db
             $save = new File();
             $save->file = $path;
-            $save->user_id = $request->user_id;
+            $save->user_id = 1;
             $save->save();
 
             return response()->json([
@@ -72,5 +72,4 @@ class fileController extends Controller
             ]);
         }
     }
-
 }

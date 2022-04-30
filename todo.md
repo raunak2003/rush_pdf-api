@@ -1,4 +1,5 @@
 ### Raunaq Project work list
 
-* [ ] Generate JWT Token
-* [ ] Auth Middleware implementation
+* [ ] Solve JWT Error
+* [ ] Use of Auth Middleware
+* [ ] Response to frontend of user account created

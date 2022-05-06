@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use JWTAuth;
-use Auth;
-use App\Exceptions\Handler;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
-// use Tymon\JWTAuth\Contracts\JWTSubject;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class authController extends Controller
 {
     //redirect to google page
-
     public function google_redirect()
     {
         return [
@@ -22,68 +19,53 @@ class authController extends Controller
         ];
     }
 
-    //  public function authenticate()
-    // {
-    //     $credentials = Socialite::driver('google')->stateless()->user();
-    //     //Request is validated
-    //     //Creat token
-    //     try {
-    //         if (! $token = JWTAuth::attempt($credentials)) {
-    //             return response()->json([
-    //             	'success' => false,
-    //             	'message' => 'Login credentials are invalid.',
-    //             ], 400);
-    //         }
-    //     } catch (JWTException $e) {
-    // 	return $credentials;
-    //         return response()->json([
-    //             	'success' => false,
-    //             	'message' => 'Could not create token.',
-    //             ], 500);
-    //     }
-
- 		//Token created, return with success response and jwt token
-    //     return response()->json([
-    //         'success' => true,
-    //         'token' => $token,
-    //     ]);
-    // }
-
-
     //google callback
-    public function google_callback()
+    public function google_callback(Request $req)
     {
         $googleUser = Socialite::driver('google')->stateless()->user();
-        // $token = "";
-        // dd($googleUser);
-        $user = Null;
-        // $user_create;
-        DB::transaction(function () use ($googleUser, &$user, &$user_create) {
-            $user = User::where('email', $googleUser->email);
+        $user = null;
+        DB::transaction(function () use ($googleUser, &$user) {
+            $socialAccount = User::firstOrNew(
+                ['email' => $googleUser->getEmail(), 'provider' => 'google']);
+            $user = User::where('email', $googleUser->email)->first();
+
             if (!$user) {
                 $user = User::create([
-                    'name' => $googleUser->user->name,
-                    'email' => $googleUser->user->email,
-                    // 'avatar' => $googleUser->user->picture,
-                    // 'remember_token' => $token,
+                    'provider' => 'google',
+                    'name' => $googleUser->name,
+                    'email' => $googleUser->email,
+                    'avatar' => $googleUser->avatar,
                 ]);
             }
+
         });
-         // generating JWT user tokens
-            if (! $token = JWTAuth::attempt($user)) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'user exists.',
-                ], 200);
-            }else{
-                return response()->json([
-                    'success' => true,
-                    'data' => [
-                        'email' => $user->email,
-                        'token' => $token
-                    ],
-                    'message' => 'login successfull'
-                ], 200);
+
+        try {
+            // verify the credentials and create a token for the user
+            if (!$token = JWTAuth::fromUser($user)) {
+                return response()->json(['error' => 'invalid_credentials'], 401);
             }
+        } catch (JWTException $e) {
+            // something went wrong
+            return response()->json(['error' => 'could_not_create_token'], 500);
+        }
+                return response()->json([
+                'email'=>$user->email,
+                'token'=>$this->respondWithToken($token)
+                ]);
+    }
+
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'token' => $token,
+            'token_type' => 'bearer',
+        ]);
+    }
+
+    protected function guard()
+    {
+        return Auth::guard();
     }
 }
+ 

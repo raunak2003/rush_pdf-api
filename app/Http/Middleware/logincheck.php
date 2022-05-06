@@ -14,10 +14,11 @@ class logincheck
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
+
     public function handle(Request $request, Closure $next)
     {
         if(!auth()->check()){
-            return redirect('google_login');
+            return response()->json(['error'=>"Please Login First"],401);
         }
         return $next($request);
     }

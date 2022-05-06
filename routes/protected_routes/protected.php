@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
-
-Route::post('file_upload',[fileController::class,'store']);
-Route::post('list',[fileController::class,'list']);
-Route::delete('delete/{id}',[fileController::class,'delete']);
+Route::post('file_upload',[fileController::class,'store']) ->middleware('logincheck');
+Route::post('list',[fileController::class,'list']) ->middleware('logincheck');
+Route::delete('delete/{id}',[fileController::class,'delete']) ->middleware('logincheck');

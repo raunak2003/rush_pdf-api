@@ -6,12 +6,15 @@ use App\Models\file;
 use App\Models\user;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Auth;
 use Validator;
 
 class fileController extends Controller
 {
     public function store(Request $request)
     {
+
+        // $user=Auth::id();
         $validator = Validator::make($request->all(),
             [
                 'category' => '',
@@ -20,17 +23,17 @@ class fileController extends Controller
             ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return response()->json(['error' => $validator->errors()], 400);
         }
 
-        if ($file = $request->file('file')) {
+        if ($file = $request->file('file')->getClientOriginalName()) {
             if($category = $request->category=='assignment'){
             $path = $file->store('./userDocuments/assignment');
 
             //store your file into directory and db
             $save = new File();
             $save->file = $path;
-            $save->user_id = 1;
+            $save->user_id = $user;
             $save->title=$request->title;
             $save->save();
 
@@ -47,7 +50,7 @@ class fileController extends Controller
             //store your file into directory and db
             $save = new File();
             $save->file = $path;
-            $save->user_id = 1;
+            $save->user_id = $user;
             $save->title=$request->title;
             $save->save();
 
@@ -64,7 +67,7 @@ class fileController extends Controller
             //store your file into directory and db
             $save = new File();
             $save->file = $path;
-            $save->user_id = 1;
+            $save->user_id = $user;
             $save->title=$request->title;
             $save->save();
 
@@ -72,6 +75,7 @@ class fileController extends Controller
                 "success" => true,
                 "message" => "File successfully uploaded",
                 "file" => $path,
+                "title"=>$request->title
             ]);
           }
           if($category = $request->category=='results'){
@@ -80,7 +84,7 @@ class fileController extends Controller
             //store your file into directory and db
             $save = new File();
             $save->file = $path;
-            $save->user_id = 1;
+            $save->user_id = $user;
             $save->title=$request->title;
             $save->save();
 
@@ -88,25 +92,28 @@ class fileController extends Controller
                 "success" => true,
                 "message" => "File successfully uploaded",
                 "file" => $path,
+                "title"=>$request->title
             ]);
           }
         }
-
     }
 
 //list of all files
     function list() {
-        $result = DB::table('files')->get()->where('user_id','1');
+
+        $user=Auth::id();
+        $result = DB::table('files')->get()->where('user_id',$user);
         if ($result) {
             return response()->json([
                 "success" => true,
                 "list" => $result,
-            ]);
-        } else {
+            ],200);
+        }
+        else {
             return response()->json([
                 "success" => false,
                 "message" => "No Data Found",
-            ]);
+            ],404);
         }
     }
 
@@ -126,7 +133,7 @@ class fileController extends Controller
             return response()->json([
                 "success" => false,
                 "message" => "NO DATA MATCHED",
-            ]);
+            ],404);
         }
     }
 }

@@ -100,7 +100,6 @@ class fileController extends Controller
 
 //list of all files
     function list() {
-
         $user=auth()->user();
         $result = DB::table('files')->get()->where('user_id',$user->id);
         if ($result) {

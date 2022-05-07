@@ -11,18 +11,11 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class authController extends Controller
 {
-    //redirect to google page
-    public function google_redirect()
-    {
-        return [
-            'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
-        ];
-    }
-
     //google callback
     public function google_callback(Request $req)
     {
-        $googleUser = Socialite::driver('google')->stateless()->user();
+        $Googletoken = Socialite::driver('google')->user()->token;
+        $googleUser = Socialite::driver('google')->userFromToken($Googletoken);
         $user = null;
         DB::transaction(function () use ($googleUser, &$user) {
             $socialAccount = User::firstOrNew(
@@ -37,7 +30,6 @@ class authController extends Controller
                     'avatar' => $googleUser->avatar,
                 ]);
             }
-
         });
 
         try {
@@ -49,10 +41,10 @@ class authController extends Controller
             // something went wrong
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
-                return response()->json([
-                'email'=>$user->email,
-                'token'=>$this->respondWithToken($token)
-                ]);
+        return response()->json([
+            'email' => $user->email,
+            'token' => $this->respondWithToken($token),
+        ]);
     }
 
     protected function respondWithToken($token)
@@ -68,4 +60,3 @@ class authController extends Controller
         return Auth::guard();
     }
 }
- 

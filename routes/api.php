@@ -19,9 +19,4 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('login', [authController::class,'login']);
-Route::get('/google/redirect', [authController::class, 'google_redirect'])->name('google_redirect');
 Route::get('/google/oauth2callback', [authController::class, 'google_callback'])->name('google_callback');
-// Route::post('file_upload',[fileController::class,'store']);
-// Route::post('list',[fileController::class,'list']);
-// Route::delete('delete/{id}',[fileController::class,'delete']);

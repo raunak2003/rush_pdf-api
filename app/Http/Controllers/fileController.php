@@ -6,7 +6,7 @@ use App\Models\file;
 use App\Models\user;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 
 class fileController extends Controller

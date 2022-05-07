@@ -14,7 +14,7 @@ class fileController extends Controller
     public function store(Request $request)
     {
 
-        // $user=Auth::id();
+        $user=auth()->user();
         $validator = Validator::make($request->all(),
             [
                 'category' => '',
@@ -33,7 +33,7 @@ class fileController extends Controller
             //store your file into directory and db
             $save = new File();
             $save->file = $path;
-            $save->user_id = $user;
+            $save->user_id = $user->id;
             $save->title=$request->title;
             $save->save();
 
@@ -50,7 +50,7 @@ class fileController extends Controller
             //store your file into directory and db
             $save = new File();
             $save->file = $path;
-            $save->user_id = $user;
+            $save->user_id = $user->id;
             $save->title=$request->title;
             $save->save();
 
@@ -67,7 +67,7 @@ class fileController extends Controller
             //store your file into directory and db
             $save = new File();
             $save->file = $path;
-            $save->user_id = $user;
+            $save->user_id = $user->id;
             $save->title=$request->title;
             $save->save();
 
@@ -84,7 +84,7 @@ class fileController extends Controller
             //store your file into directory and db
             $save = new File();
             $save->file = $path;
-            $save->user_id = $user;
+            $save->user_id = $user->id;
             $save->title=$request->title;
             $save->save();
 
@@ -101,8 +101,8 @@ class fileController extends Controller
 //list of all files
     function list() {
 
-        $user=Auth::id();
-        $result = DB::table('files')->get()->where('user_id',$user);
+        $user=auth()->user();
+        $result = DB::table('files')->get()->where('user_id',$user->id);
         if ($result) {
             return response()->json([
                 "success" => true,

@@ -14,8 +14,9 @@ class authController extends Controller
     //google callback
     public function google_callback(Request $req)
     {
-        $Googletoken = Socialite::driver('google')->user()->token;
-        $googleUser = Socialite::driver('google')->userFromToken($Googletoken);
+        $Googletoken = $req->token;
+        $googleUser = Socialite::driver('google')->stateless()->userFromToken($Googletoken);
+        dd($googleUser);
         $user = null;
         DB::transaction(function () use ($googleUser, &$user) {
             $socialAccount = User::firstOrNew(

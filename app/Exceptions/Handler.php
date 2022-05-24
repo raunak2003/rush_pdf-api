@@ -38,7 +38,7 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
-           
+
         });
     }
 
@@ -63,7 +63,7 @@ public function render($request, Throwable $exception)
                     $message = "Request not found";
                     break;
                 case 401:
-                    $message = "Request not found";
+                    $message = "Unauthorized not found";
                     break;
                 case 500:
                     $message = "Request not found";
@@ -72,7 +72,7 @@ public function render($request, Throwable $exception)
                     $message = "Some error occured";
                     break;
             }
-            return response()->json(['status'=>false, 'message' => $message], $statusCode); 
+            return response()->json(['status'=>false, 'message' => $message], $statusCode);
         }
     }
     return parent::render($request, $exception);

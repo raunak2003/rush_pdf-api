@@ -14,15 +14,12 @@ class authController extends Controller
     //google callback
     public function google_callback(Request $req)
     {
-        $Googletoken = $req->token;
+        try {
+        $Googletoken = $req->tokenId;
         $googleUser = Socialite::driver('google')->stateless()->userFromToken($Googletoken);
-        dd($googleUser);
         $user = null;
         DB::transaction(function () use ($googleUser, &$user) {
-            $socialAccount = User::firstOrNew(
-                ['email' => $googleUser->getEmail(), 'provider' => 'google']);
             $user = User::where('email', $googleUser->email)->first();
-
             if (!$user) {
                 $user = User::create([
                     'provider' => 'google',
@@ -32,11 +29,12 @@ class authController extends Controller
                 ]);
             }
         });
-
         try {
             // verify the credentials and create a token for the user
             if (!$token = JWTAuth::fromUser($user)) {
-                return response()->json(['error' => 'invalid_credentials'], 401);
+                return response()->json([
+                    'error' => 'unauthorized',
+                ], 401);
             }
         } catch (JWTException $e) {
             // something went wrong
@@ -46,6 +44,10 @@ class authController extends Controller
             'email' => $user->email,
             'token' => $this->respondWithToken($token),
         ]);
+
+        } catch (\Throwable$th) {
+            return response()->json(['error' => 'Some error occured'], 500);
+        }
     }
 
     protected function respondWithToken($token)

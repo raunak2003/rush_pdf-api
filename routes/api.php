@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\authController;
-use App\Http\Controllers\fileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/google/oauth2callback', [authController::class, 'google_callback'])->name('google_callback');
+
+Route::get('/google/redirect', [authController::class, 'google_redirect']);
+Route::post('/google/oauth2callback', [authController::class, 'google_callback'])->name('google_callback');

@@ -101,7 +101,6 @@ class fileController extends Controller
         }
     }
 
-//list of all files
     function list() {
         try {
             $user = auth()->user();

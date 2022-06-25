@@ -11,12 +11,19 @@ use Laravel\Socialite\Facades\Socialite;
 class authController extends Controller
 {
     //google callback
+    
     public function google_callback(Request $req)
     {
-        try {
+        
             $Googletoken = $req->tokenId;
-            $googleUser = Socialite::driver('google')->stateless()->userFromToken($Googletoken);
+            try {
+                $googleUser = Socialite::driver('google')->scopes(['email', 'name'])->stateless()->userFromToken($Googletoken);
+            }catch(Exception $e){
+                return response()->json([ 'message' => "Please select valid email"], 400);
+            }
+            if(!isset($googleUser->email)) return response()->json([ 'message' => "Can't find your email id"], 400);
             $user = null;
+            
             DB::transaction(function () use ($googleUser, &$user) {
                 $user = User::where('email', $googleUser->email)->first();
                 if (!$user) {
@@ -44,9 +51,7 @@ class authController extends Controller
                 'token' => $this->respondWithToken($token),
             ]);
 
-        } catch (\Throwable$th) {
-            return response()->json(['error' => 'Some error occured'], 500);
-        }
+       
     }
 
     protected function respondWithToken($token)

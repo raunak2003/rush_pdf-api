@@ -14,7 +14,7 @@ class fileController extends Controller
     public function store(Request $request)
     {
 
-        try {
+       
             $user = auth()->user();
             $validator = Validator::make($request->all(),
                 [
@@ -29,10 +29,10 @@ class fileController extends Controller
 
             if ($file = $request->file('file')) {
                 if ($category = $request->category == 'assignment') {
-                    $path = $file->store('./userDocuments/assignment');
+                    $path = $file->store('E:\nukepin-app\public\documents');
 
                     //store your file into directory and db
-                    $save = new File();
+                    $save = new file();
                     $save->file = $path;
                     $save->user_id = $user->id;
                     $save->title = $request->title;
@@ -46,9 +46,9 @@ class fileController extends Controller
                     ]);
                 }
                 if ($category = $request->category == '') {
-                    $path = $file->store('./userDocuments');
+                    $path = $file->store('/userDocuments');
                     //store your file into directory and db
-                    $save = new File();
+                    $save = new file();
                     $save->file = $path;
                     $save->user_id = $user->id;
                     $save->title = $request->title;
@@ -65,7 +65,7 @@ class fileController extends Controller
                     $path = $file->store('./userDocuments/govtDocuments');
 
                     //store your file into directory and db
-                    $save = new File();
+                    $save = new file();
                     $save->file = $path;
                     $save->user_id = $user->id;
                     $save->title = $request->title;
@@ -82,7 +82,7 @@ class fileController extends Controller
                     $path = $file->store('./public/userDocuments/results');
 
                     //store your file into directory and db
-                    $save = new File();
+                    $save = new file();
                     $save->file = $path;
                     $save->user_id = $user->id;
                     $save->title = $request->title;
@@ -96,9 +96,7 @@ class fileController extends Controller
                     ]);
                 }
             }
-        } catch (\Throwable$th) {
-            return response()->json(['error' => 'some error occured'], 500);
-        }
+       
     }
 
     function list() {
